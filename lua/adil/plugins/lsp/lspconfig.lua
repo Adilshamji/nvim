@@ -9,7 +9,9 @@ return {
   config = function()
     -- import lspconfig plugin
     local lspconfig = require("lspconfig")
-
+    lspconfig.clangd.setup({
+     cmd = { "clangd", "--header-insertion=never" }
+    })
     -- import mason_lspconfig plugin
     local mason_lspconfig = require("mason-lspconfig")
 
@@ -66,7 +68,13 @@ return {
         keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
       end,
     })
-
+        local isLspDiagnosticsVisible = true
+        vim.keymap.set("n", "<leader>lx", function()
+        isLspDiagnosticsVisible = not isLspDiagnosticsVisible
+        vim.diagnostic.config({
+        virtual_text = isLspDiagnosticsVisible,
+        underline = isLspDiagnosticsVisible
+    }) end)
     -- used to enable autocompletion (assign to every lsp server config)
     local capabilities = cmp_nvim_lsp.default_capabilities()
 

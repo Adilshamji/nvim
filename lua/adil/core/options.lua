@@ -1,6 +1,7 @@
 -- Tree style
-vim.g.netrw_liststyle = 3
-
+--vim.g.netrw_liststyle = 1 
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 local opt = vim.opt
 
 --Tab
@@ -9,7 +10,7 @@ vim.opt.shiftwidth = 4
 vim.opt.tabstop = 2
 
 --indentation
-vim.opt.smartindent = true 
+vim.opt.smartindent = true
 vim.opt.number = false
 vim.opt.relativenumber = true
 vim.opt.swapfile = false
