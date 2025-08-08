@@ -18,7 +18,13 @@ return {
     -- import cmp-nvim-lsp plugin
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
-    local keymap = vim.keymap -- for conciseness
+    local keymap = vim.keymap -- for concisenesr
+    lspconfig.tinymist.setup({
+      settings = {
+        exportPdf = "never",
+        formatterMode = "typstyle",
+      },
+    })
 
     vim.api.nvim_create_autocmd("LspAttach", {
       group = vim.api.nvim_create_augroup("UserLspConfig", {}),

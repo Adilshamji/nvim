@@ -29,6 +29,8 @@ return {
         "python",
         "cpp",
         "go",
+        "typst",
+
       },
     })
   end,
