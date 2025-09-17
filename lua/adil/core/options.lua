@@ -38,3 +38,7 @@ opt.clipboard:append("unnamedplus") -- use system clipboard as default
 --split windows
 opt.splitright = true -- split verical window to the right
 opt.splitbelow = true -- split horizontal window to the botoom
+
+vim.filetype.add({
+  extension = { typ = "typst" },
+})
