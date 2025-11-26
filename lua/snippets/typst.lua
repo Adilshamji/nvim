@@ -1,65 +1,119 @@
-
-local ls  = require("luasnip")
-local s   = ls.snippet
-local t   = ls.text_node
-local i   = ls.insert_node
+local ls = require("luasnip")
+local s = ls.snippet
+local sn = ls.snippet_node
+local t = ls.text_node
+local i = ls.insert_node
+local f = ls.function_node
+local d = ls.dynamic_node
 local fmt = require("luasnip.extras.fmt").fmt
+local fmta = require("luasnip.extras.fmt").fmta
+
+-- 1. VISUAL SELECTION HELPER
+local function get_visual(_, parent)
+  local sel = parent.snippet.env.LS_SELECT_RAW
+  if sel and #sel > 0 then
+    return sn(nil, t(sel))
+  else
+    return sn(nil, i(1))
+  end
+end
+
+-- 2. MATH CONTEXT DETECTION
+local function in_math()
+  local node = vim.treesitter.get_node()
+  while node do
+    if node:type() == "math" then return true end
+    node = node:parent()
+  end
+  return false
+end
 
 return {
-  s({ trig = "dm", snippetType = "autosnippet" }, {
-    t({ "$", "  " }), i(0), t({ "", "$" }),
-  }),
 
-  s({ trig = "mk", snippetType = "autosnippet" }, {
-    t("$"), i(1), t("$"),
-  }),
+  ----------------------------------------------------------------
+  -- MATH ZONES
+  ----------------------------------------------------------------
 
-s("header", fmt([[
-#import "@preview/bamdone-ieeeconf:0.1.1": ieee
-
-#show: ieee.with(
-  title: [{title}],
-  abstract: [
-    {abstract}
-  ],
-  authors: (
-    (
-      given: "{given}",
-      surname: "{surname}",
-      email: [{email}],
-      affiliation: {affiliation},
-    ),
+  -- FIXED: Added extra <> at the end so i(0) is used
+  -- Inline math: mk -> $...$ (Jump out with Tab)
+  s({ trig = "mk", snippetType = "autosnippet" },
+    fmta("$<>$<>", { d(1, get_visual), i(0) })
   ),
-  affiliations: (
-    (
-      name: [{aff_name}],
-      address: [{aff_address}],
-      email-suffix: [{email_suffix}],
-    ),
+  s({ trig = "dm", snippetType = "autosnippet" },
+    fmta("$\n<>\n$<>", { d(1, get_visual), i(0) })
   ),
-)
 
-= {h1}
 
-{cursor}
-]], {
-    title        = i(1,  "Digital Image Processing, Lectures"),
-    abstract     = i(2,  "Abstract goes here…"),
-    given        = i(3,  "Adil"),
-    surname      = i(4,  "Shamji"),
-    email        = i(5,  "adil02.shamji"),
-    affiliation  = i(6,  "1"),
-    aff_name     = i(7,  "Linköping, Sweden"),
-    aff_address  = i(8,  "Asham, Linköping, Sweden"),
-    email_suffix = i(9,  "gmail.com"),
-    h1           = i(10, "Lecture 1"),
-    cursor       = i(0),
-  })),
-s({ trig = "td", snippetType = "autosnippet" }, {
-  t("#todo["),        -- fixed text
-  i(1, "Write something"), -- first insert point with placeholder
-  t("]"),             -- closing bracket
-}),
+  -- Multi-line display math: md
+  s({ trig = "md", snippetType = "autosnippet" },
+    fmta(
+      [[
+$
+  <>
+$<>]],
+      { d(1, get_visual), i(0) }
+    )
+  ),
 
+  ----------------------------------------------------------------
+  -- INTEGRALS & SUMS
+  ----------------------------------------------------------------
+
+  -- Definite Sum: dsum -> sum_(n=1)^(oo)
+  s({ trig = "dsum", snippetType = "autosnippet", condition = in_math },
+    fmta("sum_(<>=<>)^(<> ) <>", {
+      i(1, "n"),
+      i(2, "1"),
+      i(3, "oo"),
+      i(0)
+    })
+  ),
+
+  -- Definite Integral: dint -> integral_(-oo)^(oo)
+  s({ trig = "dint", snippetType = "autosnippet", condition = in_math },
+    fmta("integral_(<>)^(<> ) <> dif <>", {
+      i(1, "-oo"),
+      i(2, "oo"),
+      i(3),
+      i(0, "x")
+    })
+  ),
+
+  -- Simple Integral: int
+  s({ trig = "int", snippetType = "autosnippet", condition = in_math },
+    fmta("integral <> dif <>", {
+      i(1),
+      i(0, "x")
+    })
+  ),
+
+  ----------------------------------------------------------------
+  -- HELPERS (Fractions, Subscripts)
+  ----------------------------------------------------------------
+  
+  -- Fractions: 1/ -> (1)/
+  s({ trig = "(%w+)/", regTrig = true, snippetType = "autosnippet", condition = in_math },
+    fmta("(<>)/(<>)<>", {
+      f(function(_, snip) return snip.captures[1] end),
+      i(1),
+      i(0)
+    })
+  ),
+  
+  -- Visual Selection Fraction: Select text -> Tab -> /
+  s({ trig = "/", condition = in_math },
+    fmta("(<>)/(<>)<>", {
+      f(function(_, snip) return snip.env.TM_SELECTED_TEXT or "" end),
+      i(1),
+      i(0)
+    })
+  ),
+
+  -- Subscripts: x1 -> x_1
+  s({ trig = "(%a)(%d)", regTrig = true, snippetType = "autosnippet", condition = in_math },
+    fmta("<>_<>", {
+      f(function(_, snip) return snip.captures[1] end),
+      f(function(_, snip) return snip.captures[2] end)
+    })
+  ),
 }
-
