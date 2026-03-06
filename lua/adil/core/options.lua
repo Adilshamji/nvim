@@ -12,7 +12,7 @@ vim.opt.tabstop = 2
 --indentation
 vim.opt.smartindent = true
 vim.opt.number = false
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false
 vim.opt.swapfile = false
 opt.autoindent = true --copy indent from current line when strating new one
 

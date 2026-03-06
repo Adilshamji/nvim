@@ -12,7 +12,11 @@ return {
         filtered_items = {
           visible = true, -- Show hidden files
         },
-        follow_current_file = true, -- Automatically focus on the current file
+        -- 🔹 UPDATED: This is now a table with an 'enabled' property
+        follow_current_file = {
+          enabled = true, -- Automatically focus on the current file
+          leave_dirs_open = false, -- Close directories that are not in path (optional)
+        },
         hijack_netrw_behavior = "open_current", -- Replace netrw with Neo-tree
       },
       window = {
@@ -32,4 +36,3 @@ return {
     keymap("n", "<leader>er", "<cmd>Neotree refresh<CR>", { desc = "Refresh file explorer" })
   end,
 }
-

@@ -34,6 +34,10 @@ return {
         opts.desc = "Show LSP definitions"
         keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
 
+
+        opts.desc = "Show signature help"
+        keymap.set("n", "gs", vim.lsp.buf.signature_help, opts) -- Press 'gs' in Normal mode
+
         opts.desc = "Show LSP implementations"
         keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
 

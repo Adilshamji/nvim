@@ -1,11 +1,12 @@
 return {
-  'chomosuke/typst-preview.nvim',
-  ft = 'typst', -- only load when opening .typ files
-  version = '1.*',
-  opts = {
-    -- Optional settings
-    -- open_cmd = 'zathura',
-    -- update_interval = 2000,
-    -- preview_cmd = { 'xdg-open' },
-  }
+  "chomosuke/typst-preview.nvim",
+  ft = "typst",
+  version = "1.*",
+  opts = {},
+  config = function(_, opts)
+    require("typst-preview").setup(opts)
+
+    vim.keymap.set("n", "<leader>tp", "<cmd>TypstPreview<CR>", { desc = "Typst Preview" })
+  end,
 }
+
