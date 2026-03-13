@@ -4,27 +4,19 @@ return {
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
     { "antosha417/nvim-lsp-file-operations", config = true },
-    { "folke/neodev.nvim", opts = {} },
-    "williamboman/mason.nvim",
-    "williamboman/mason-lspconfig.nvim",
+    { "folke/lazydev.nvim", ft = "lua", opts = {} },
   },
   config = function()
-    -- import plugins
-    local lspconfig = require("lspconfig")
-    local mason_lspconfig = require("mason-lspconfig")
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
-    local keymap = vim.keymap 
+    local keymap = vim.keymap
 
-    -- enable autocompletion capabilities
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
-    -- 1. SETUP KEYBINDS (Autocommand)
     vim.api.nvim_create_autocmd("LspAttach", {
       group = vim.api.nvim_create_augroup("UserLspConfig", {}),
       callback = function(ev)
         local opts = { buffer = ev.buf, silent = true }
 
-        -- set keybinds
         opts.desc = "Show LSP references"
         keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts)
 
@@ -34,9 +26,8 @@ return {
         opts.desc = "Show LSP definitions"
         keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
 
-
         opts.desc = "Show signature help"
-        keymap.set("n", "gs", vim.lsp.buf.signature_help, opts) -- Press 'gs' in Normal mode
+        keymap.set("n", "gs", vim.lsp.buf.signature_help, opts)
 
         opts.desc = "Show LSP implementations"
         keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
@@ -56,67 +47,67 @@ return {
         opts.desc = "Line diagnostics"
         keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
 
-        opts.desc = "Prev diagnostic"
-        keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-
-        opts.desc = "Next diagnostic"
-        keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-
         opts.desc = "Hover documentation"
         keymap.set("n", "K", vim.lsp.buf.hover, opts)
 
         opts.desc = "Restart LSP"
-        keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts)
+        keymap.set("n", "<leader>rs", "<cmd>LspRestart<CR>", opts)
       end,
     })
 
-    -- 2. DIAGNOSTIC SIGNS
-    local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-    for type, icon in pairs(signs) do
-      local hl = "DiagnosticSign" .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-    end
-
-    -- 3. SERVER HANDLERS (The Important Fix)
-    mason_lspconfig.setup_handlers({
-      -- Default handler for any server without a specific config below
-      function(server_name)
-        lspconfig[server_name].setup({
-          capabilities = capabilities,
-        })
-      end,
-
-      -- Custom handler for CLANGD
-      ["clangd"] = function()
-        lspconfig["clangd"].setup({
-          capabilities = capabilities,
-          cmd = { "clangd", "--header-insertion=never" },
-        })
-      end,
-
-      -- Custom handler for TINYMIST (Typst)
-      ["tinymist"] = function()
-        lspconfig["tinymist"].setup({
-          capabilities = capabilities,
-          settings = {
-            exportPdf = "never",
-            formatterMode = "typstyle",
-          },
-        })
-      end,
-
-      -- Custom handler for LUA_LS
-      ["lua_ls"] = function()
-        lspconfig["lua_ls"].setup({
-          capabilities = capabilities,
-          settings = {
-            Lua = {
-              diagnostics = { globals = { "vim" } },
-              completion = { callSnippet = "Replace" },
-            },
-          },
-        })
-      end,
+    vim.diagnostic.config({
+      signs = {
+        text = {
+          [vim.diagnostic.severity.ERROR] = " ",
+          [vim.diagnostic.severity.WARN] = " ",
+          [vim.diagnostic.severity.HINT] = "󰠠 ",
+          [vim.diagnostic.severity.INFO] = " ",
+        },
+      },
     })
+
+
+    vim.lsp.config("pyright", {
+      capabilities = capabilities,
+    })
+
+    vim.lsp.config("clangd", {
+      capabilities = capabilities,
+      cmd = { "clangd", "--header-insertion=never" },
+    })
+
+    vim.lsp.config("tinymist", {
+      capabilities = capabilities,
+      settings = {
+        exportPdf = "never",
+        formatterMode = "typstyle",
+      },
+    })
+
+    vim.lsp.config("lua_ls", {
+      capabilities = capabilities,
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = { "vim" },
+          },
+          workspace = {
+            checkThirdParty = false,
+            library = vim.api.nvim_get_runtime_file("", true),
+          },
+          telemetry = {
+            enable = false,
+          },
+          completion = {
+            callSnippet = "Replace",
+          },
+        },
+      },
+    })
+
+    vim.lsp.enable("pyright")
+    vim.lsp.enable("clangd")
+    vim.lsp.enable("tinymist")
+    vim.lsp.enable("lua_ls")
   end,
 }
