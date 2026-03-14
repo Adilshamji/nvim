@@ -39,6 +39,12 @@ return {
     keymap.set("n", "<leader>fs", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
     keymap.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", { desc = "Find string under cursor in cwd" })
     keymap.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
-    keymap.set("n", "fg", "<cmd>Telescope git_files<CR>", { desc = "Find git files" })
-  end,
+    keymap.set("n", "fg", function()
+      local builtin = require("telescope.builtin")
+      local ok = pcall(builtin.git_files, { show_untracked = true })
+      if not ok then
+        builtin.find_files()
+      end
+    end, { desc = "Find git files or fallback to files" })
+ end,
 }
