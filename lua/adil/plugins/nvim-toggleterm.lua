@@ -20,12 +20,6 @@ return{
       mode = "t",
       desc = "Terminal float",
     },
-    {
-      "<leader>th",
-      [[<C-\><C-n><cmd>ToggleTerm direction=horizontal<cr>]],
-      mode = "t",
-      desc = "Terminal horizontal",
-    },
-  },
+ },
 }
 

@@ -1,44 +1,53 @@
--- Tree style
---vim.g.netrw_liststyle = 1 
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
 local opt = vim.opt
 
---Tab
-vim.opt.expandtab = true
-vim.opt.shiftwidth = 4
-vim.opt.tabstop = 2
+-- netrw
+vim.g.netrw_banner = 0
+vim.g.netrw_liststyle = 3
+vim.g.netrw_browse_split = 0
+vim.g.netrw_altv = 1
+vim.g.netrw_winsize = 25
+vim.g.netrw_keepdir = 0
+vim.g.netrw_localcopydircmd = "cp -r"
 
---indentation
-vim.opt.smartindent = true
-vim.opt.number = false
-vim.opt.relativenumber = false
-vim.opt.swapfile = false
-opt.autoindent = true --copy indent from current line when strating new one
+-- tabs
+opt.expandtab = true
+opt.shiftwidth = 4
+opt.tabstop = 2
 
---Search settings
-opt.ignorecase = true --ignore case when searching
-opt.smartcase = true -- if include mexied case in search assume want case-sensitive
+-- indentation
+opt.smartindent = true
+opt.autoindent = true -- copy indent from current line when starting a new line
 
---cursorline
+-- line numbers
+opt.number = false
+opt.relativenumber = false
+
+-- files
+opt.swapfile = false
+
+-- search
+opt.ignorecase = true -- ignore case when searching
+opt.smartcase = true -- if search contains uppercase, make search case-sensitive
+
+-- cursor
 opt.cursorline = true
 
---turn on termguicolors for tokyonight color scheme to work
--- (have to use iterm2 or ant other true color terminal
-opt.termguicolors = true
+-- colors
+opt.termguicolors = true -- enable true color support
 opt.background = "dark"
 opt.signcolumn = "yes"
 
---backspace
-opt.backspace = "indent,eol,start" -- allow backspace on indent, end of file or insert mode
+-- backspace
+opt.backspace = "indent,eol,start" -- allow backspace over indent, end of line, and insert start
 
 -- clipboard
-opt.clipboard:append("unnamedplus") -- use system clipboard as default
+opt.clipboard = "unnamedplus" -- use system clipboard
 
---split windows
-opt.splitright = true -- split verical window to the right
-opt.splitbelow = true -- split horizontal window to the botoom
+-- splits
+opt.splitright = true -- vertical splits open to the right
+opt.splitbelow = true -- horizontal splits open below
 
+-- filetypes
 vim.filetype.add({
   extension = { typ = "typst" },
 })

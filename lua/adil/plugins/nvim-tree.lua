@@ -1,38 +1,16 @@
 return {
-  "nvim-neo-tree/neo-tree.nvim",
-  branch = "v3.x",
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-    "nvim-tree/nvim-web-devicons", -- Icons support
-    "MunifTanjim/nui.nvim",
-  },
+  "nvim-tree/nvim-web-devicons",
+  lazy = true,
   config = function()
-    require("neo-tree").setup({
-      filesystem = {
-        filtered_items = {
-          visible = true, -- Show hidden files
-        },
-        -- 🔹 UPDATED: This is now a table with an 'enabled' property
-        follow_current_file = {
-          enabled = true, -- Automatically focus on the current file
-          leave_dirs_open = false, -- Close directories that are not in path (optional)
-        },
-        hijack_netrw_behavior = "open_current", -- Replace netrw with Neo-tree
-      },
-      window = {
-        mappings = {
-          ["<CR>"] = "open", -- Ensures Enter key opens files
-          ["o"] = "open", -- Alternative key for opening
-          ["<2-LeftMouse>"] = "open", -- Double click to open
-        },
-      },
-    })
+    vim.g.netrw_banner = 0
+    vim.g.netrw_liststyle = 3
+    vim.g.netrw_browse_split = 0
+    vim.g.netrw_altv = 1
+    vim.g.netrw_winsize = 25
+    vim.g.netrw_keepdir = 0
+    vim.g.netrw_localcopydircmd = "cp -r"
 
-    -- 🔹 Keymaps for Neo-tree
-    local keymap = vim.keymap.set
-    keymap("n", "<leader>ee", "<cmd>Neotree filesystem toggle<CR>", { desc = "Toggle file explorer" })
-    keymap("n", "<leader>ef", "<cmd>Neotree filesystem reveal<CR>", { desc = "Reveal current file in explorer" })
-    keymap("n", "<leader>ec", "<cmd>Neotree close<CR>", { desc = "Close file explorer" })
-    keymap("n", "<leader>er", "<cmd>Neotree refresh<CR>", { desc = "Refresh file explorer" })
+    vim.keymap.set("n", "<leader>ee", ":Ex<CR>", { desc = "Open netrw" })
+    vim.keymap.set("n", "<leader>ef", ":Lex %:p:h<CR>", { desc = "Open netrw here" })
   end,
 }
