@@ -1,6 +1,9 @@
 vim.g.mapleader = " "
 
 local keymap = vim.keymap --for conciseness
+
+keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR><Esc>", { desc = "Clear search highlight" })
+
 -- Display line
 keymap.set({ "n", "v" }, "j", "gj")
 keymap.set({ "n", "v" }, "k", "gk")
@@ -21,4 +24,4 @@ keymap.set("n", "<leader>ef", ":Lex %:p:h<CR>", { desc = "Open netrw in current 
 keymap.set("n", "<leader>tp", "<cmd>TypstPreviewStart<CR>", { desc = "Start Typst preview" })
 keymap.set("n", "<leader>ts", "<cmd>TypstPreviewStop<CR>", { desc = "Stop Typst preview" })
 
-keymap.set({ "n", "o", "v" }, "L", "$")
+keymap.set({ "n", "o", "v" }, "L", "g_")

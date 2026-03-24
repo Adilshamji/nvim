@@ -9,6 +9,8 @@ vim.g.netrw_winsize = 25
 vim.g.netrw_keepdir = 0
 vim.g.netrw_localcopydircmd = "cp -r"
 
+-- others
+
 -- tabs
 opt.expandtab = true
 opt.shiftwidth = 2
